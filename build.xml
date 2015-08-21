@@ -1,0 +1,41 @@
+<project name="JWSCWebService" default="build">
+	
+<target name="init">
+	<property name="app.name" value="JWSCWebService" />
+	<property name="weblogic.path" value="C:/Oracle/WLServer/wlserver_10.3/server/lib/weblogic.jar" />
+	<property name="src.dir" location="./src" />
+	<property name="bld.dir" location="./build" />
+	<property name="lib" location="./lib" />
+</target>
+	
+<target name="clean" depends="init">
+	<delete dir="${bld.dir}" />
+	<delete dir="./war" />
+	<delete>
+	<fileset dir=".">
+	<include name="${app.name}.war" />
+	</fileset>
+	</delete>
+</target>
+	
+<target name="build-setup" depends="init">
+	<mkdir dir="${bld.dir}" />
+</target>
+	
+<path id="add.class.path">
+	<pathelement path="${weblogic.path}" />
+	<pathelement path="${java.class.path}" />
+</path>
+ 
+<target name="ws-compile" depends="init, clean, build-setup">
+	<taskdef name="jwsc" classname="weblogic.wsee.tools.anttasks.JwscTask">
+		<classpath>
+			<pathelement path="${weblogic.path}" />
+		</classpath>
+	</taskdef>
+		<jwsc srcdir="${src.dir}" destdir="${bld.dir}" classpathref="add.class.path">
+			<jws file="com/skd/service/CalculatorService.java" type="JAXWS" />
+		</jwsc>
+</target>
+	<target name="build" depends="ws-compile" />
+</project>
